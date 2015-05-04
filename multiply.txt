@@ -1,0 +1,4 @@
+BEGIN
+1at := 357;
+write (1at, 1at + 1at, 1at + 1at + 1at, 1at + 1at + 1at + 1at);
+END

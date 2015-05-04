@@ -1,0 +1,9 @@
+BEGIN
+read (f0, f1);
+f2 := f0 + f1;
+f3 := f1 + f2;
+f4 := f2 + f3;
+f5 := f3 + f4;
+f6 := f4 + f5;
+write (f0, f1, f2, f3, f4, f5, f6);
+END

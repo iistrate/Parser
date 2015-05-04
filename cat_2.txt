@@ -1,0 +1,4 @@
+BEGIN
+read (c, a; t);
+write (cat);
+END

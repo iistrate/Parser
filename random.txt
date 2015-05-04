@@ -1,0 +1,6 @@
+BEGIN
+write (a, b, c);
+sum := a + b + c;
+diff := a - b - c;
+write (sum, diff);
+END

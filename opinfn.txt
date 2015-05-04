@@ -1,0 +1,6 @@
+BEGIN
+d := 42;
+a := d - 1;
+read (b, c, d);
+write (a + (b - c));
+END

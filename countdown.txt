@@ -1,0 +1,24 @@
+BEGIN
+count := 100;
+write (count);
+count := count -10;
+write (count);
+count := count -10;
+write (count);
+count := count -10;
+write (count);
+count := count -10;
+write (count);
+count := count -10;
+write (count);
+count := count -10;
+write (count);
+count := count -10;
+write (count);
+count := count -10;
+write (count);
+count := count -10;
+write (count);
+count := count -10;
+write (count);
+END
