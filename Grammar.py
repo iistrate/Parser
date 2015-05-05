@@ -10,14 +10,26 @@ class Grammar(object):
             'program' : ('BEGIN', 'END'),
             'keyword' : ('NULL'),
             'statement' : ('READ', 'WRITE', ':='),
-            'symbol' : ('(', ')', '-', '+'),
+            'symbol' : ('(', ')'),
+            'op' : ('-', '+')
         }
-
+      
+    #return dict
     def getLex(self):
         return self.__LexicalElements
     
+    def isStatement(self, statement):
+        if statement in self.__LexicalElements['statement']:
+            return True
+        return False
+
+    def isOp(self, op):
+        if op in self.__LexicalElements['op']:
+            return True
+        return False
+
     #see if token is a keyword
-    def isProgramK(self, keyword):
+    def isProgramKw(self, keyword):
         if keyword in self.__LexicalElements['program']:
             return True
         return False
@@ -48,7 +60,10 @@ class Grammar(object):
     def isIdentifier(self, identifier):
         if  self.isIntegerConstant(identifier) or \
             self.isStringConstant(identifier) or \
-            self.isProgramK(identifier) or \
-            self.isSymbol(identifier):
+            self.isProgramKw(identifier) or \
+            self.isSymbol(identifier) or \
+            self.isOp(identifier) or \
+            self.isStatement(identifier) or \
+            self.isIntegerConstant(identifier[0]):
             return False
         return True
