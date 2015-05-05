@@ -9,8 +9,8 @@ class Grammar(object):
         {
             'program' : ('BEGIN', 'END'),
             'keyword' : ('NULL'),
-            'statement' : ('READ', 'WRITE', ':='),
-            'symbol' : ('(', ')', ','),
+            'statement' : ('read', 'write', ':=', '='),
+            'symbol' : ('(', ')', ',', ';'),
             'op' : ('<', '>', '-', '+'),
         }
       

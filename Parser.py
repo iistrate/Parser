@@ -72,6 +72,10 @@ class Parser(object):
                 #check if valid read
                 if (currentLine[0].lower() == "read"):
                     self.isValidRead(currentLine)
+                #check if it starts with an identifier
+                elif (self.__m_Grammar.isIdentifier(currentLine[0])):
+                      #check if line is a statement
+                      self.isValidStatement(currentLine)
 
             except Exception as custom:
                 print(custom)
@@ -82,13 +86,32 @@ class Parser(object):
          
         if (valid): print("File is valid, congrats you can write good sintax! Yay?")
 
-    
-    def isValidRead(self, line):
+   
+    def isValidStatement(self, line):
+        #we know if started with an identifier
         count = 0
         for token in line:
-            print(token)
+            #is the next token :=
+            if count == 1:
+                if token != ":=":
+                    raise Exception(self.errorExpectedToken(self.__m_line, ":=", token))
+            count += 1
+
+    def isValidRead(self, line):
+        #check if it is a valid statement
+        self.isTerminated(line)
+        count = 0
+        for token in line:
+            if (count == 1 and token != "("):
+                raise Exception(self.errorExpectedToken(self.__m_line, "(", token))
+            if (count == len(line)-2 and token != ")"):
+                raise Exception(self.errorExpectedToken(self.__m_line, ")", token))
             count += 1
     
+    def isTerminated(self, line):
+        if line[-1] != ";":
+            raise Exception(self.errorExpectedToken(self.__m_line, ";", line[-1]))
+
     #count left P and right P; at the end raise exception if !=
     def checkParentheses(self, line):
         leftP = 0
