@@ -10,7 +10,7 @@ class Grammar(object):
             'program' : ('BEGIN', 'END'),
             'keyword' : ('NULL'),
             'statement' : ('READ', 'WRITE', ':='),
-            'symbol' : ('(', ')'),
+            'symbol' : ('(', ')', ','),
             'op' : ('<', '>', '-', '+'),
         }
       

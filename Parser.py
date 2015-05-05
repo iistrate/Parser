@@ -4,6 +4,7 @@
 
 from Grammar import *
 import re
+from builtins import Exception
 
 class Parser(object):
     def __init__(self, file):
@@ -41,8 +42,7 @@ class Parser(object):
             #remove empty lines
             if (line):
                 self.__m_tokens.append(match.findall(line))
-        #2d array to 1d array
-        self.__m_tokens = [x for sublist in self.__m_tokens for x in sublist]
+
     
     def __str__(self):
         rep = ""
@@ -62,12 +62,31 @@ class Parser(object):
         self.tokenize()
         print(self.__str__())
         while self.hasMoreTokens:
-            current = self.__m_tokens[self.__m_cursor]
-            next = self.__m_tokens[self.__m_cursor + 1] if self.__m_cursor + 1 < len(self.__m_tokens) else current
-
+            try:
+                self.isProgram()
+            except Exception as custom:
+                print(custom)
+                break
+            
+            currentLine = self.__m_tokens[self.__m_cursor]
+            #break current line in tokens
+            for token in currentLine:
+                print(token)
+            
             self.__m_cursor += 1
+        print("File is valid, congrats you can write good sintax! Yay?")
 
-
+    #check if program
+    def isProgram(self):
+        if self.__m_tokens[-1] == "END" and self.__m_tokens[0] == "BEGIN":
+            return
+        elif self.__m_tokens[0][0] != "BEGIN":
+            raise Exception(self.error(1, "BEGIN", self.__m_tokens[0][0]))
+        elif self.__m_tokens[-1][0] != "END":
+            raise Exception(self.error(len(self.__m_tokens), "END", self.__m_tokens[-1][0]))
+    
+    def error(self, lineNr, expected, got):
+        return "Error at line #{}: expected {} not {}".format(lineNr, expected, got)
     #tests
     def testGrammar(self):
         print(self.__m_Grammar.isIdentifier("variable"))
