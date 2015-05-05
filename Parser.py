@@ -10,6 +10,7 @@ class Parser(object):
         self.__m_file = file
         self.__m_Grammar = Grammar()
         self.__m_tokens = []
+        self.__m_cursor = 0
 
     def removeComments(self, string):
         #tested on http://pythex.org/
@@ -49,17 +50,37 @@ class Parser(object):
             rep += " {} \n".format(token)
         return rep
 
+    #check if we have more tokens in the raw token list
+    @property
+    def hasMoreTokens(self):
+        if self.__m_cursor < len(self.__m_tokens):
+            return True
+        return False
+
     def run(self):
+        #self.testGrammar() #Tests for grammar
         self.tokenize()
         print(self.__str__())
+        while self.hasMoreTokens:
+            current = self.__m_tokens[self.__m_cursor]
+            next = self.__m_tokens[self.__m_cursor + 1] if self.__m_cursor + 1 < len(self.__m_tokens) else current
+
+            self.__m_cursor += 1
 
 
     #tests
     def testGrammar(self):
         print(self.__m_Grammar.isIdentifier("variable"))
+        print(self.__m_Grammar.isIdentifier("1variable"))
         print(self.__m_Grammar.isIntegerConstant("500"))
+        print(self.__m_Grammar.isIntegerConstant("b500"))
         print(self.__m_Grammar.isProgramKw("BEGIN"))
+        print(self.__m_Grammar.isProgramKw("BLA"))
         print(self.__m_Grammar.isStringConstant("\"String bla bla\""))
+        print(self.__m_Grammar.isStringConstant("String bla bla"))
         print(self.__m_Grammar.isSymbol("("))
+        print(self.__m_Grammar.isSymbol("$"))
         print(self.__m_Grammar.isOp("+"))
+        print(self.__m_Grammar.isOp("/"))
         print(self.__m_Grammar.isStatement(":="))
+        print(self.__m_Grammar.isStatement("="))
