@@ -12,6 +12,8 @@ class Parser(object):
         self.__m_Grammar = Grammar()
         self.__m_tokens = []
         self.__m_cursor = 0
+        #cursor starts at 0, line at 1
+        self.__m_line = self.__m_cursor + 1
 
     def removeComments(self, string):
         #tested on http://pythex.org/
@@ -61,32 +63,62 @@ class Parser(object):
         #self.testGrammar() #Tests for grammar
         self.tokenize()
         print(self.__str__())
+        valid = True
         while self.hasMoreTokens:
+            currentLine = self.__m_tokens[self.__m_cursor]
             try:
+                #check for BEGIN; then END
                 self.isProgram()
+                #check if valid read
+                if (currentLine[0].lower() == "read"):
+                    self.isValidRead(currentLine)
+
             except Exception as custom:
                 print(custom)
+                valid = False
                 break
-            
-            currentLine = self.__m_tokens[self.__m_cursor]
-            #break current line in tokens
-            for token in currentLine:
-                print(token)
-            
+                
             self.__m_cursor += 1
-        print("File is valid, congrats you can write good sintax! Yay?")
+         
+        if (valid): print("File is valid, congrats you can write good sintax! Yay?")
+
+    
+    def isValidRead(self, line):
+        count = 0
+        for token in line:
+            print(token)
+            count += 1
+    
+    #count left P and right P; at the end raise exception if !=
+    def checkParentheses(self, line):
+        leftP = 0
+        rightP = 0
+        for token in line:
+            if token == '(':
+                leftP += 1
+            elif token == ')':
+                rightP += 1
+        if leftP == rightP:
+            return
+        #if here we have an error
+        missing = "right"
+        if leftP < rightP:
+            missing = "left"
+
+        raise Exception("Missing a {} parentheses on line {}".format(missing, self.__m_line))
 
     #check if program
     def isProgram(self):
-        if self.__m_tokens[-1] == "END" and self.__m_tokens[0] == "BEGIN":
+        if self.__m_tokens[-1][0].lower() == "end" and self.__m_tokens[0][0].lower() == "begin":
             return
-        elif self.__m_tokens[0][0] != "BEGIN":
-            raise Exception(self.error(1, "BEGIN", self.__m_tokens[0][0]))
-        elif self.__m_tokens[-1][0] != "END":
-            raise Exception(self.error(len(self.__m_tokens), "END", self.__m_tokens[-1][0]))
+        elif self.__m_tokens[0][0].lower() != "BEGIN":
+            raise Exception(self.errorExpectedToken(1, "BEGIN", self.__m_tokens[0][0]))
+        elif self.__m_tokens[-1][0].lower() != "end":
+            raise Exception(self.errorExpectedToken(len(self.__m_tokens)+1, "END", self.__m_tokens[-1][0]))
     
-    def error(self, lineNr, expected, got):
+    def errorExpectedToken(self, lineNr, expected, got):
         return "Error at line #{}: expected {} not {}".format(lineNr, expected, got)
+
     #tests
     def testGrammar(self):
         print(self.__m_Grammar.isIdentifier("variable"))
