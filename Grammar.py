@@ -11,7 +11,7 @@ class Grammar(object):
             'keyword' : ('NULL'),
             'statement' : ('READ', 'WRITE', ':='),
             'symbol' : ('(', ')'),
-            'op' : ('-', '+')
+            'op' : ('<', '>', '-', '+'),
         }
       
     #return dict
