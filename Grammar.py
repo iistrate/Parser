@@ -9,11 +9,13 @@ class Grammar(object):
         {
             'program' : ('BEGIN', 'END'),
             'keyword' : ('NULL'),
-            'statement' : ('read', 'write', ':=', '='),
-            'symbol' : ('(', ')', ',', ';'),
-            'op' : ('<', '>', '-', '+'),
+            'statement' : ('read', 'write', ':='),
+            'symbol' : ('{', '}', '(', ')', '[', ']', '.', ',', ';', '+',
+                            '-', '*', '/', '&', '|', '<', '>', '=', '~'),
+            'op' : ('+', '-'),
         }
-      
+    
+
     #return dict
     def getLex(self):
         return self.__LexicalElements

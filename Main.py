@@ -9,7 +9,7 @@ def main():
     running = True
     while(running):
         try:
-            path = "faux_fibonnaci.txt" #input("Howdy, please enter filename: ") uncomment when done
+            path = "count.txt"#input("Howdy, please enter filename: ")
             file = open(path, 'r')
         except:
             print("{} is an invalid filename!".format(path))

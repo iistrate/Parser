@@ -26,11 +26,9 @@ class Parser(object):
         keywords = '|'.join(self.__m_Grammar.getLex()['keyword'])
         statements = '|'.join(self.__m_Grammar.getLex()['statement'])
         program = '|'.join(self.__m_Grammar.getLex()['program'])
-        op = '|'.join(self.__m_Grammar.getLex()['op'])
         nkeywords = '[\w\-]+'
         strings = r'"[^"]*"'
         numbers = '\d+'
-
 
         #get them all together
         match = re.compile(symbols + "|" + keywords + "|" + strings + "|" +
@@ -48,8 +46,10 @@ class Parser(object):
     
     def __str__(self):
         rep = ""
+        count = 1
         for token in self.__m_tokens:
-            rep += " {} \n".format(token)
+            rep += "{:3d} {} \n".format(count, token)
+            count += 1
         return rep
 
     #check if we have more tokens in the raw token list
@@ -71,22 +71,31 @@ class Parser(object):
                 self.isProgram()
                 #check if valid read
                 if (currentLine[0].lower() == "read"):
-                    self.isValidRead(currentLine)
+                    self.isValidFunction(currentLine)
                 #check if it starts with an identifier
                 elif (self.__m_Grammar.isIdentifier(currentLine[0])):
                       #check if line is a statement
                       self.isValidStatement(currentLine)
+                #check if valid write
+                elif (currentLine[0].lower() == "write"):
+                    self.isValidFunction(currentLine)
+                #check if valid var
+                elif self.__m_Grammar.isIntegerConstant(currentLine[0][0]):
+                    raise Exception("Invalid var name at line {} got {}".format(self.__m_line, currentLine[0]))                        
 
-            except Exception as custom:
-                print(custom)
+            except Exception as customErr:
+                print(customErr)
                 valid = False
                 break
                 
             self.__m_cursor += 1
+            self.updateLine()
          
         if (valid): print("File is valid, congrats you can write good sintax! Yay?")
 
-   
+    def updateLine(self):
+        self.__m_line = self.__m_cursor + 1
+
     def isValidStatement(self, line):
         #we know if started with an identifier
         count = 0
@@ -95,9 +104,16 @@ class Parser(object):
             if count == 1:
                 if token != ":=":
                     raise Exception(self.errorExpectedToken(self.__m_line, ":=", token))
+            #if + or -
+            if token in self.__m_Grammar.getLex()['op']:
+                #check before and after for identifiers or integer constants
+                if (not self.__m_Grammar.isIdentifier(line[count-1])) and (not self.__m_Grammar.isIntegerConstant(line[count-1])):
+                    raise Exception(self.errorExpectedToken(self.__m_line, "identifier or int on the left", line[count-1]))
+                elif (not self.__m_Grammar.isIdentifier(line[count+1])) and (not self.__m_Grammar.isIntegerConstant(line[count+1])):
+                    raise Exception(self.errorExpectedToken(self.__m_line, "identifier or int on the right", line[count+1]))
             count += 1
 
-    def isValidRead(self, line):
+    def isValidFunction(self, line):
         #check if it is a valid statement
         self.isTerminated(line)
         count = 0
@@ -106,6 +122,15 @@ class Parser(object):
                 raise Exception(self.errorExpectedToken(self.__m_line, "(", token))
             if (count == len(line)-2 and token != ")"):
                 raise Exception(self.errorExpectedToken(self.__m_line, ")", token))
+            if token == ',':
+                #check before and after for identifiers or integer constants
+                if (not self.__m_Grammar.isIdentifier(line[count-1])) and (not self.__m_Grammar.isIntegerConstant(line[count-1])):
+                    raise Exception(self.errorExpectedToken(self.__m_line, "identifier or int on the left", line[count-1]))
+                elif (not self.__m_Grammar.isIdentifier(line[count+1])) and (not self.__m_Grammar.isIntegerConstant(line[count+1])):
+                    raise Exception(self.errorExpectedToken(self.__m_line, "identifier or int on the right", line[count+1]))
+            if token == ';':
+                if count != len(line) -1:
+                    raise Exception("Invalid use of terminator ';' at line {} expected ','".format(self.__m_line))                     
             count += 1
     
     def isTerminated(self, line):
@@ -139,6 +164,7 @@ class Parser(object):
         elif self.__m_tokens[-1][0].lower() != "end":
             raise Exception(self.errorExpectedToken(len(self.__m_tokens)+1, "END", self.__m_tokens[-1][0]))
     
+    #custom exception message
     def errorExpectedToken(self, lineNr, expected, got):
         return "Error at line #{}: expected {} not {}".format(lineNr, expected, got)
 
