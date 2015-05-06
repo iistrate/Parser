@@ -31,8 +31,8 @@ class Parser(object):
         numbers = '\d+'
 
         #get them all together
-        match = re.compile(symbols + "|" + keywords + "|" + strings + "|" +
-                           nkeywords + "|" + numbers + "|" + program + "|" + statements)
+        match = re.compile(symbols + "|" + keywords + "|" + strings + "|" + nkeywords
+                           + "|" + numbers + "|" + program + "|" + statements)
 
         for line in self.__m_file:
             #remove out comments
@@ -48,7 +48,7 @@ class Parser(object):
         rep = ""
         count = 1
         for token in self.__m_tokens:
-            rep += "{:3d} {} \n".format(count, token)
+            rep += "{:3d}{} \n".format(count, token)
             count += 1
         return rep
 
@@ -69,6 +69,7 @@ class Parser(object):
             try:
                 #check for BEGIN; then END
                 self.isProgram()
+                self.checkUnknown(currentLine)
                 #check if valid read
                 if (currentLine[0].lower() == "read"):
                     self.isValidFunction(currentLine)
@@ -92,6 +93,11 @@ class Parser(object):
             self.updateLine()
          
         if (valid): print("File is valid, congrats you can write good sintax! Yay?")
+    
+    def checkUnknown(self, line):
+        for token in line:
+            if token in self.__m_Grammar.getLex()['unknown']:
+                raise Exception("Unexpected token: {} on line {}, token not in language!".format(token, self.__m_line))
 
     def updateLine(self):
         self.__m_line = self.__m_cursor + 1
