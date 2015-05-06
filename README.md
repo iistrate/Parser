@@ -1,2 +1,2 @@
-# Parser, sintax validation tool
-Sintax validation tool, Parser for tiny language.
+# Parser, syntax validation tool
+Syntax validation tool, Parser for tiny language.
