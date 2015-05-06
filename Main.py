@@ -9,15 +9,18 @@ def main():
     running = True
     while(running):
         try:
-            path = "count.txt"#input("Howdy, please enter filename: ")
+            path = input("Howdy Mr. J, please enter filename: ")
             file = open(path, 'r')
         except:
             print("{} is an invalid filename!".format(path))
         else:
             running = False
+    
+    print("[i]Contents of {}, sintax validation on bottom.".format(path))
 
     CompParser = Parser(file)
     CompParser.run()
+    input('Press Enter to exit')
 
     #free resources
     file.close()

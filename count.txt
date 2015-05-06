@@ -1,7 +1,7 @@
 BEGIN
 read (count);
 write (count);
-count := &count + 1;
+count := count + 1;
 write (count);
 count := count + 1;
 write (count);

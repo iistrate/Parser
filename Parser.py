@@ -17,7 +17,7 @@ class Parser(object):
 
     def removeComments(self, string):
         #tested on http://pythex.org/
-        comment = (re.compile('//[^\n]*|/\*[^\n]*|\*[^\n]*', re.MULTILINE|re.DOTALL)).sub("", string)
+        comment = (re.compile('//[^\n]*|/*|\*[^\n]*', re.MULTILINE|re.DOTALL)).sub("", string)
         return comment
 
     def tokenize(self):
@@ -103,6 +103,7 @@ class Parser(object):
         self.__m_line = self.__m_cursor + 1
 
     def isValidStatement(self, line):
+        self.isTerminated(line)
         #we know if started with an identifier
         count = 0
         for token in line:
@@ -141,7 +142,7 @@ class Parser(object):
     
     def isTerminated(self, line):
         if line[-1] != ";":
-            raise Exception(self.errorExpectedToken(self.__m_line, ";", line[-1]))
+            raise Exception(self.errorExpectedToken(self.__m_line, "; as a terminator", line[-1]))
 
     #count left P and right P; at the end raise exception if !=
     def checkParentheses(self, line):
